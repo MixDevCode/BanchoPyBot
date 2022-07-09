@@ -1,5 +1,5 @@
 {
-    "name": "djs",
+    "name": "banchopy-bot",
     "version": "1.0.0",
     "description": "",
     "main": "index.js",
@@ -8,7 +8,7 @@
         "test": "nodemon index.js"
     },
     "keywords": [],
-    "author": "",
+    "author": "MixDevCode",
     "license": "ISC",
     "dependencies": {
         "axios": "^0.27.2",
