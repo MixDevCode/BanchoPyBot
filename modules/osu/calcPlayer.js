@@ -31,9 +31,6 @@ module.exports = async (message, user_name, mode) => {
             return {star_avg: star_avg, aim_avg: aim_avg, speed_avg: speed_avg, acc_avg: acc_avg}
         }
         for (let i = 0; i < 50; i++) {
-            if(i%2 == 0){
-                msg.edit(`\`${Number((i/calc_count)*100).toFixed(0)}% Completed...\` **(This may take a while)**`);
-            }
             const { data: beatmapData } = await banchoApi().get('get_beatmaps', {
                 params: {
                     k: botConfig.apikey,
@@ -51,6 +48,7 @@ module.exports = async (message, user_name, mode) => {
             beatmapData[0].max_combo = parseInt(beatmapData[0].max_combo)
             beatmapData[0].difficultyrating = parseFloat(beatmapData[0].difficultyrating)
             if(mode == 0 || mode == 4){
+                msg.edit(`\`${Number((i/calc_count)*100).toFixed(0)}% Completed...\` **(This may take a while)**`);
                 let parser, map_info;
                 parser = await beatmapParser({beatmap_id: best.scores[i].beatmap.id});
                 map_info = std_pp_calc({parser: parser, mod_num: parseInt(best.scores[i].mods), mode: 'acc'})
@@ -79,33 +77,23 @@ module.exports = async (message, user_name, mode) => {
 
             } else {
                 star_avg += beatmapData[0].difficultyrating;
+                if(i%10 == 0){
+                    msg.edit(`\`${Number((i/calc_count)*100).toFixed(0)}% Completed...\` **(This may take a while)**`);
+                }
                 if (mode == 1) {
                     let acc = Number((0.5 * best.scores[i].n100 + best.scores[i].n300) / (best.scores[i].n300 + best.scores[i].n100 + best.scores[i].nmiss) * 100)
-                    
                     let speed_skill = Math.pow(beatmapData[0].difficultyrating/1.1, Math.log(beatmapData[0].bpm)/Math.log(beatmapData[0].difficultyrating*20))
                     let acc_skill = Math.pow(beatmapData[0].difficultyrating, (Math.pow(acc, 3)/Math.pow(100, 3)) * 1.05) * (Math.pow(beatmapData[0].diff_overall, 0.02) / Math.pow(6, 0.02)) * (Math.pow(beatmapData[0].diff_drain, 0.02) / (Math.pow(5, 0.02)))
                     speed_avg += speed_skill
                     if (acc_skill !== Infinity) acc_avg += acc_skill
-
-                    if(i%10 == 0){
-                        msg.edit(`\`${Number((i/calc_count)*100).toFixed(0)}% Completed...\` **(This may take a while)**`);
-                    }
                 } else if (mode == 2) {
                     let acc = Number((best.scores[i].n50 + best.scores[i].n100 + best[i].best.scores[i].n300) / (best.scores[i].nkatu + best.scores[i].nmiss + best.scores[i].n50 + best.scores[i].n100 + best.scores[i].n300) * 100) 
-
                     let aim_skill = Math.pow(beatmapData[0].difficultyrating, Math.log(beatmapData[0].bpm)/Math.log(beatmapData[0].difficultyrating*20)) * (Math.pow(beatmapData[0].diff_size, 0.1) / Math.pow(4, 0.1))
                     let acc_skill = Math.pow(beatmapData[0].difficultyrating, (Math.pow(acc, 3.5)/Math.pow(100, 3.5)) * 1.1) * (Math.pow(beatmapData[0].diff_overall, 0.02) / Math.pow(6, 0.02)) * (Math.pow(beatmapData[0].diff_drain, 0.02) / (Math.pow(5, 0.02)))
                     aim_avg += aim_skill
                     if (acc_skill !== Infinity) acc_avg += acc_skill
-
-                    if(i%10 == 0){
-                        msg.edit(`\`${Number((i/calc_count)*100).toFixed(0)}% Completed...\` **(This may take a while)**`);
-                    }
-
                 } else if (mode == 3) {
                     let acc = Number((50 * best.scores[i].n50 + 100 * best.scores[i].n100 + 200 * best.scores[i].nkatu + 300 * (best.scores[i].n300 + best.scores[i].ngeki)) / (300 * (best.scores[i].nmiss + best.scores[i].n50 + best.scores[i].n100 + best.scores[i].nkatu + best.scores[i].n300 + best.scores[i].ngeki)) * 100)
-            
-                    star_avg += beatmapData[0].difficultyrating;
                     let aim_skill = Math.pow(beatmapData[0].difficultyrating/1.1, Math.log(beatmapData[0].bpm)/Math.log(beatmapData[0].difficultyrating*20))
                     let speed_skill = Math.pow(beatmapData[0].difficultyrating/1.1, Math.log(beatmapData[0].bpm)/Math.log(beatmapData[0].difficultyrating*20))
                     let acc_skill = Math.pow(beatmapData[0].difficultyrating, (Math.pow(acc, 3)/Math.pow(100, 3)) * 1.05) * (Math.pow(beatmapData[0].diff_overall, 0.02) / Math.pow(6, 0.02)) * (Math.pow(beatmapData[0].diff_drain, 0.02) / (Math.pow(5, 0.02)))
